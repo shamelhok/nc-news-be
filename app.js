@@ -1,19 +1,15 @@
 const express = require('express');
 const app = express();
-app.use(express.json());
 
-const{getTopics, badUrl}=require('./controllers')
+
+const{getTopics, badUrl, getArticle, handleCatch}=require('./controllers')
 
 app.get('/api/topics',getTopics)
+app.get('/api/articles/:article_id',getArticle)
 
 ///////////////////////////
 app.all('*', badUrl);
-///////////////////////////////////////////
-app.use((err, req, res, next) => {
-    if(err){
-        console.log(err)
-        res.send(err)
-    }
-    });
+
+app.use(handleCatch);
   
 module.exports = app;
