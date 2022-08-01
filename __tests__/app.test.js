@@ -74,5 +74,9 @@ describe('GET /api/articles/:article_id',()=>{
         expect(body.msg).toBe('article not found')
       })
     });
-
+    test("status 400 for invalid non numeric id", () => {
+      return request(app).get('/api/articles/banana').expect(400).then(({body})=>{
+        expect(body.msg).toBe('invalid id')
+      })
+    });
 })
