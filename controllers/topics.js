@@ -1,5 +1,4 @@
-const{selectTopics}= require('./models')
-
+const{selectTopics}= require('../models')
 exports.getTopics = (req,res,next)=>{
     selectTopics().then(({rows})=>{
         let msg = 'no topics found'
@@ -7,8 +6,5 @@ exports.getTopics = (req,res,next)=>{
             msg = 'here are the topics'
         }
         res.status(200).send({msg,topics:rows})
-    })
-}
-exports.badUrl = (req,res,next)=>{
-    res.status(404).send({msg:'URL not found'})
+    }).catch(next)
 }

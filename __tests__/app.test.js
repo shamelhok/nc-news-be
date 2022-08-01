@@ -34,10 +34,10 @@ describe('GET /api/topics', () => {
                     }
                   ]
                 expect(body.topics).toEqual(expected)
+                expect(body.topics.length).toBe(3)
             });
     });
 });
-
 describe('GET /api/nonsense', () => {
     test('endpoint responds with a bad path messaeg', () => {
         return request(app).get('/api/nonsense').expect(404).then(({body})=>{
@@ -45,3 +45,38 @@ describe('GET /api/nonsense', () => {
         });
     })
 });
+describe('GET /api/articles/:article_id',()=>{
+    test('status 200 should respond with article object', () => {
+      return request(app).get('/api/articles/1').expect(200).then(({body})=>{
+        expect(typeof(body.article)).toBe('object')
+      })
+    });
+    test('status 200 article object should have correct title, topic, body and votes', () => {
+      return request(app).get('/api/articles/1').expect(200).then(({body})=>{
+        const expected = {
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          body: "I find this existence challenging",
+          votes: 100,
+        }
+        expect(body.article).toMatchObject(expected)
+      })
+    });
+    test("status 200 should respond with author 's name and correct created at date", () => {
+      return request(app).get('/api/articles/1').expect(200).then(({body})=>{
+        const {article} = body
+        expect(article.author).toBe('jonny')
+        expect(article.created_at).toBe("2020-07-09T20:11:00.000Z")
+      })
+    });
+    test("status 404 if no article found with requested id", () => {
+      return request(app).get('/api/articles/100000').expect(404).then(({body})=>{
+        expect(body.msg).toBe('article not found')
+      })
+    });
+    test("status 400 for invalid non numeric id", () => {
+      return request(app).get('/api/articles/banana').expect(400).then(({body})=>{
+        expect(body.msg).toBe('invalid id')
+      })
+    });
+})
