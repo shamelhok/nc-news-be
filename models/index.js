@@ -9,3 +9,6 @@ exports.selectArticle = (id)=>{
 exports.selectUsers=()=>{
     return db.query('SELECT * FROM users;')
 }
+exports.updateVotes = (votes,id)=>{
+    return db.query(`UPDATE articles SET votes = votes +$1 WHERE article_id =$2 RETURNING *;`,[votes,id])
+}

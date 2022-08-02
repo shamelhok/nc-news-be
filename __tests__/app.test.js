@@ -15,6 +15,14 @@ describe('GET /api/topics', () => {
             expect(Array.isArray(body.topics)).toBe(true)
         });
     })
+    test('endpoint responds with an array of objects with correct properties', () => {
+        return request(app).get('/api/topics').expect(200).then(({body})=>{
+            body.topics.forEach(topic=>{
+              expect(typeof(topic.description)).toEqual('string')
+              expect(typeof(topic.slug)).toEqual('string')
+            })
+        });
+    })
     test('array contains the correct data', () => {
         return request(app)
             .get('/api/topics')
@@ -79,4 +87,46 @@ describe('GET /api/articles/:article_id',()=>{
         expect(body.msg).toBe('invalid id')
       })
     });
+})
+describe('PATCH /api/articles/:article_id', ()=>{
+  test('should return the article', () => {
+    return request(app).patch('/api/articles/1')
+    .send({inc_votes:0}).expect(200).then(({body})=>{
+      const article= body.article
+      expect(body.article.article_id).toEqual(1)
+      expect(article.author ).toEqual('jonny')
+      expect(article. title ).toEqual( "Living in the shadow of a great man" )
+      expect( article.topic ).toEqual( "mitch" )
+      expect(article. body).toEqual(  "I find this existence challenging")
+      expect(article. votes ).toEqual( 100 )
+      expect(article. created_at ).toEqual( "2020-07-09T20:11:00.000Z" )
+    })
+  });
+  test('should update the article', () => {
+    return request(app).patch('/api/articles/2')
+    .send({inc_votes:10}).expect(200).then(({body})=>{
+      expect(body.article.votes).toEqual(10)
+    })
+  });
+  test('should update the article', () => {
+    return request(app).patch('/api/articles/1')
+    .send({inc_votes:-10}).expect(200).then(({body})=>{
+      expect(body.article.votes).toEqual(90)
+    })
+  });
+  test("status 404 for non existent article", () => {
+    return request(app).patch('/api/articles/100000').send({inc_votes:10}).expect(404).then(({body})=>{
+      expect(body.msg).toBe('article not found')
+    })
+  });
+  test("status 400 for bad request: boody doesnt have inc_votes property", () => {
+    return request(app).patch('/api/articles/100000').send({banana:10}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test("status 400 for invalid non numeric id", () => {
+    return request(app).patch('/api/articles/banana').send({inc_votes:10}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('invalid id')
+    })
+  });
 })
