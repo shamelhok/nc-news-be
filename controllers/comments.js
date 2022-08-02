@@ -11,7 +11,7 @@ exports.getComments = (req,res,next)=>{
             selectArticle(article_id).then(({rows})=>{
                 if(rows.length===0){
                     res.status(404).send({msg:'article not found'})
-                } else res.status(404).send({msg:'no comments'})
+                } else res.status(200).send({msg:'no comments',comments:[]})
             })
         } else{
             const ref = createRef(users,'username','name')
