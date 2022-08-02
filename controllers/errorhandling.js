@@ -3,13 +3,13 @@ exports.badUrl = (req,res,next)=>{
 }
 exports.handleCatch = (err, req, res, next) => {
     if(err.code ==='22P02'){
-        console.log('22P02');
+        //console.log('22P02, invalid input');
         res.status(400).send({msg:'bad request'})
     }else if(err.code ==='23502'){
-        console.log('23502, violates no-null');
+        //console.log('23502, violates no-null');
         res.status(400).send({msg:'bad request'})
     }else if(err.code ==='23503'){
-        console.log('23503, violates reference');
+        //console.log('23503, violates reference');
         res.status(400).send({msg:'bad request'})
     }else if(err){   
         console.log(err)
