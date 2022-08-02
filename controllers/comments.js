@@ -1,5 +1,5 @@
 const { createRef } = require('../db/seeds/utils')
-const {selectComments, selectUsers, selectArticle}= require('../models')
+const {selectComments, selectUsers, selectArticle, insertComment}= require('../models')
 
 exports.getComments = (req,res,next)=>{
     const {article_id}= req.params
@@ -23,4 +23,26 @@ exports.getComments = (req,res,next)=>{
         }
     }).catch(next)
 }
+}
+exports.postComment = (req,res,next)=>{
+    const {article_id}= req.params
+    const username =req.body.username
+    const body =req.body.body
+    if (!/^\d+$/.test(article_id)){
+        res.status(400).send({msg:'invalid id'})
+    }else{
+        selectArticle(article_id).then(({rows})=>{
+            if(rows.length===0){
+                res.status(404).send({msg:'article not found'})
+            }
+        }).then(()=>{
+            return Promise.all([insertComment(article_id,username,body),selectUsers()])}
+        ).then(([{rows:comments},{rows:users}])=>{
+            const new_comment =comments[0]
+            const ref = createRef(users,'username','name')
+            if (ref.hasOwnProperty(new_comment .author)){
+                new_comment. author = ref[new_comment. author]} 
+            res.status(201).send({new_comment})
+        }).catch(next)
+    }
 }
