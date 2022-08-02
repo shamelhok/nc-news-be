@@ -1,4 +1,4 @@
-const{selectArticle, selectUsers, updateVotes,selectArticleNew}= require('../models')
+const{selectArticle, selectUsers, updateVotes,selectArticleNew, selectAllArticles}= require('../models')
 const {createRef}=require('../db/seeds/utils')
 
 exports.getArticle= (req,res,next)=>{
@@ -29,4 +29,19 @@ exports.patchArticle= async (req,res,next)=>{
         await updateVotes(inc_votes,article_id) 
         exports.getArticle(req,res,next)
     }
+}
+exports.getAllArticles = (req,res,next)=>{
+    Promise.all( [ selectAllArticles() , selectUsers() ]).then(([{rows:articles},{rows:users}])=>{
+        if(articles.length===0){
+            res.status(404).send({msg:'articles not found'})
+        } else{
+        articles.forEach(article=>{
+        const ref = createRef(users,'username','name')
+        if (ref.hasOwnProperty(article.author)){ article.author = ref[article.author]}
+        article.comment_count= parseInt(article.comment_count)
+        delete article.body
+        })
+        res.status(200).send({articles})
+        }
+    }).catch(next)
 }
