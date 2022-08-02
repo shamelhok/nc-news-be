@@ -192,3 +192,37 @@ describe('GET and PATCH /api/articles/:article_id now includes comment count',()
     })
   });
 })
+describe('GET /api/articles',()=>{
+  test('should respond with articles array', () => {
+    return request(app).get('/api/articles').expect(200).then(({body})=>{
+      expect(body.articles).toBeInstanceOf(Array)
+    })
+  });
+  test('should respond with all articles in database', () => {
+    return request(app).get('/api/articles').expect(200).then(({body})=>{
+      expect(body.articles.length).toBe(12)
+    })
+  });
+  test('array should contain article objects with correct properties', () => {
+    return request(app).get('/api/articles').expect(200).then(({body})=>{
+      const article = body.articles[0]
+      expect(typeof(article.author)).toBe('string')
+      expect(typeof(article.title)).toBe('string')
+      expect(typeof(article.article_id)).toBe('number')
+      expect(typeof(article.topic)).toBe('string')
+      expect(typeof(article.created_at)).toBe('string')
+      expect(typeof(article.votes)).toBe('number')
+      expect(typeof(article.comment_count)).toBe('number')
+    })
+  });
+  test('should respond with articles in descinding date order', () => {
+    return request(app).get('/api/articles').expect(200).then(({body})=>{
+      const expectedFirst = testData.articleData[2]
+      const expectedLast = testData.articleData[6]
+      const first = body.articles[0]
+      const last = body.articles.at(-1)
+      expect(first.title).toBe(expectedFirst.title)
+      expect(last.title).toBe(expectedLast.title)
+    })
+  });
+})
