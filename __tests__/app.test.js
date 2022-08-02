@@ -2,7 +2,8 @@ const testData = require('../db/data/test-data');
 const app = require('../app');
 const request = require('supertest');
 const db = require('../db/connection')
-const seed=require('../db/seeds/seed')
+const seed=require('../db/seeds/seed');
+const users = require('../db/data/test-data/users');
 
 afterAll(() => {
     if (db.end)  return db.end();
@@ -41,7 +42,7 @@ describe('GET /api/topics', () => {
                       slug: 'paper'
                     }
                   ]
-                expect(body.topics).toEqual(expected)
+                expect(body.topics).toMatchObject(expected)
                 expect(body.topics.length).toBe(3)
             });
     });
@@ -102,16 +103,22 @@ describe('PATCH /api/articles/:article_id', ()=>{
       expect(article. created_at ).toEqual( "2020-07-09T20:11:00.000Z" )
     })
   });
-  test('should update the article', () => {
+  test('should update the article, increase vote', () => {
     return request(app).patch('/api/articles/2')
     .send({inc_votes:10}).expect(200).then(({body})=>{
       expect(body.article.votes).toEqual(10)
     })
   });
-  test('should update the article', () => {
+  test('should update the article, decrease vote', () => {
     return request(app).patch('/api/articles/1')
     .send({inc_votes:-10}).expect(200).then(({body})=>{
       expect(body.article.votes).toEqual(90)
+    })
+  });
+  test('status 400 bad request for non inc_votes', () => {
+    return request(app).patch('/api/articles/2')
+    .send({inc_votes:'asdasd'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
     })
   });
   test("status 404 for non existent article", () => {
@@ -119,7 +126,7 @@ describe('PATCH /api/articles/:article_id', ()=>{
       expect(body.msg).toBe('article not found')
     })
   });
-  test("status 400 for bad request: boody doesnt have inc_votes property", () => {
+  test("status 400 for bad request: body doesnt have inc_votes property", () => {
     return request(app).patch('/api/articles/100000').send({banana:10}).expect(400).then(({body})=>{
       expect(body.msg).toBe('bad request')
     })
@@ -129,4 +136,39 @@ describe('PATCH /api/articles/:article_id', ()=>{
       expect(body.msg).toBe('invalid id')
     })
   });
+})
+describe('GET /api/users',()=>{
+  test('200 should respond with an array', () => {
+    return request(app).get('/api/users').expect(200).then(({body})=>{
+      expect(body.users).toBeInstanceOf(Array)
+    })
+  });
+  test('200 should respond with an array of correct length', () => {
+    return request(app).get('/api/users').expect(200).then(({body})=>{
+      expect(body.users.length).toBe(4)
+    })
+  });
+  test('200 should respond with stored users data', () => {
+    return request(app).get('/api/users').expect(200).then(({body})=>{
+      const user1 = body.users[0]
+      const expected = {
+        username: 'butter_bridge',
+        name: 'jonny',
+        avatar_url:
+          'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+      }
+      expect(user1).toMatchObject(expected)
+    })
+  });
+  test('200 array should contain user objects with correct properties', () => {
+    return request(app).get('/api/users').expect(200).then(({body})=>{
+      users.forEach(user=>{
+      expect(user).toBeInstanceOf(Object)
+      expect(typeof(user.name)).toBe('string')
+      expect(typeof(user.username)).toBe('string')
+      expect(typeof(user.avatar_url)).toBe('string')
+    })
+    })
+  });
+
 })

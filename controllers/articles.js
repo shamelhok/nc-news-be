@@ -22,7 +22,7 @@ exports.patchArticle= (req,res,next)=>{
     const inc_votes= req.body.inc_votes
     if (!/^\d+$/.test(article_id)){
         res.status(400).send({msg:'invalid id'})
-    }else if(inc_votes===undefined){
+    }else if(typeof(inc_votes)!=='number'){
         res.status(400).send({msg:'bad request'})
     } else {
         Promise.all( [ updateVotes(inc_votes,article_id) , selectUsers() ]).then(([{rows},{rows:users}])=>{
