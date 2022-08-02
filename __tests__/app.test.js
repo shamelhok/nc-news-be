@@ -3,7 +3,6 @@ const app = require('../app');
 const request = require('supertest');
 const db = require('../db/connection')
 const seed=require('../db/seeds/seed');
-const users = require('../db/data/test-data/users');
 
 afterAll(() => {
     if (db.end)  return db.end();
@@ -162,7 +161,7 @@ describe('GET /api/users',()=>{
   });
   test('200 array should contain user objects with correct properties', () => {
     return request(app).get('/api/users').expect(200).then(({body})=>{
-      users.forEach(user=>{
+      body.users.forEach(user=>{
       expect(user).toBeInstanceOf(Object)
       expect(typeof(user.name)).toBe('string')
       expect(typeof(user.username)).toBe('string')
@@ -170,5 +169,26 @@ describe('GET /api/users',()=>{
     })
     })
   });
-
+})
+describe('GET and PATCH /api/articles/:article_id now includes comment count',()=>{
+  test('200 article response should now include comment count property', () => {
+    return request(app).get('/api/articles/1').expect(200).then(({body})=>{
+      expect(body.article).toHaveProperty('comment_count')
+    })
+  });
+  test('200 comment_count counts comments 1', () => {
+    return request(app).get('/api/articles/1').expect(200).then(({body})=>{
+      expect(body.article.comment_count).toEqual(11)
+    })
+  });
+  test('200 comment_count counts comments 2', () => {
+    return request(app).get('/api/articles/2').expect(200).then(({body})=>{
+      expect(body.article.comment_count).toEqual(0)
+    })
+  });
+  test('200 PATCH includes correct comment_count', () => {
+    return request(app).patch('/api/articles/1').send({inc_votes:1}).expect(200).then(({body})=>{
+      expect(body.article.comment_count).toEqual(11)
+    })
+  });
 })
