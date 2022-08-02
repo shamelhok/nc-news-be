@@ -3,9 +3,10 @@ exports.badUrl = (req,res,next)=>{
 }
 exports.handleCatch = (err, req, res, next) => {
     if(err.code ==='22P02'){
-        res.status(400).send({msg:'invalid id'})
+        console.log('22P02');
+        res.status(400).send({msg:'bad request'})
     }else if(err){   
     console.log(err)
-        res.status(500).send({msg:'bad request'})
+        res.status(500).send({msg:'server error'})
     }
 }
