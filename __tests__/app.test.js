@@ -226,3 +226,50 @@ describe('GET /api/articles',()=>{
     })
   });
 })
+describe('GET /api/articles/:article_id/comments',()=>{
+  test('should respond with comments array', () => {
+    return request(app).get('/api/articles/1/comments').expect(200).then(({body})=>{
+      expect(body.comments).toBeInstanceOf(Array)
+    })
+  });
+  test('should respond with all comments, if there are comments', () => {
+    return request(app).get('/api/articles/1/comments').expect(200).then(({body})=>{
+      expect(body.comments.length).toBe(11)
+    })
+  });
+  test('array should contain comment objects with correct properties', () => {
+    return request(app).get('/api/articles/1/comments').expect(200).then(({body})=>{
+      body.comments.forEach(comment=>{
+      expect(typeof(comment.body)).toBe('string')
+      expect(typeof(comment.author)).toBe('string')
+      expect(typeof(comment.created_at)).toBe('string')
+      expect(typeof(comment.votes)).toBe('number')
+      expect(typeof(comment.comment_id)).toBe('number')
+    })
+    })
+  });
+  test('should return correct comment data', () => {
+    return request(app).get('/api/articles/6/comments').expect(200).then(({body})=>{
+      const comment = body.comments[0]
+      expect(comment.body).toBe("This is a bad article name")
+      expect(comment.votes).toBe(1)
+      expect(comment.author).toBe('jonny')
+    })
+  });
+  test("status 404 if no article found with requested id", () => {
+    return request(app).get('/api/articles/100000/comments').expect(404).then(({body})=>{
+      expect(body.msg).toBe('article not found')
+    })
+  });
+  test("status 400 for invalid non numeric id", () => {
+    return request(app).get('/api/articles/banana/comments').expect(400).then(({body})=>{
+      expect(body.msg).toBe('invalid id')
+    })
+  });
+  test('should give message for no comments', () => {
+    return request(app).get('/api/articles/2/comments').expect(200).then(({body})=>{
+      expect(body.msg).toBe('no comments')
+      expect(body.comments.length).toBe(0)
+    })
+  });
+})

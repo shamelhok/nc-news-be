@@ -22,3 +22,7 @@ exports.selectAllArticles=()=>{
     FROM articles LEFT JOIN comments on articles.article_id=comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at desc
    ;`)
 }
+exports.selectComments = (id)=>{
+    return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body FROM comments JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id =$1
+    ;`,[id])
+}
