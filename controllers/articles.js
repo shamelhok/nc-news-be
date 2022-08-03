@@ -42,12 +42,13 @@ exports.patchArticle = async (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
   const sort_by = req.query.sort_by || 'created_at'
   const order= req.query.order || 'desc'
+  const topic = req.query.topic
   if(!['asc','desc'].includes(order)){
     res.status(400).send({msg:'bad request',details:'invalid order query'})
   } else if(!['title','created_at','votes','article_id','comment_count','body','author','topic'].includes(sort_by)){
     res.status(400).send({msg:'bad request',details:'invalid sort_by query'})
   } else{
-  selectAllArticles(sort_by,order)
+  selectAllArticles(sort_by,order,topic)
     .then(({ rows: articles }) => {
       if (articles.length === 0) {
         res.status(404).send({ msg: "articles not found" });

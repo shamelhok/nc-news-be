@@ -9,7 +9,7 @@ afterAll(() => {
   });
 beforeEach(() => seed(testData));
 
-describe('GET /api/articles (queries)',()=>{
+xdescribe('GET /api/articles sort_by and order queries',()=>{
     test('should take sort_by query and return articles in order, defaults to descending', () => {
         return request(app).get('/api/articles?sort_by=created_at').expect(200).then(({body})=>{
           expect(body.articles).toBeSortedBy('created_at',{descending:true})
@@ -70,4 +70,27 @@ describe('GET /api/articles (queries)',()=>{
           expect(body.msg).toBe('bad request')
         })
       });
+})
+xdescribe('GET /api/articles topics filter query',()=>{
+  test('should filter results using topic query, topic = mitch', () => {
+    return request(app).get('/api/articles?topic=mitch').expect(200).then(({body})=>{
+      body.articles.forEach(article=>{
+        expect(article.topic).toBe('mitch')
+      })
+      expect(body.articles.length).toBeGreaterThan(0)
+    })
+  });
+  test('topic = cats', () => {
+    return request(app).get('/api/articles?topic=cats').expect(200).then(({body})=>{
+      body.articles.forEach(article=>{
+        expect(article.topic).toBe('cats')
+      })
+      expect(body.articles.length).toBeGreaterThan(0)
+    })
+  });
+  test('404 topic = nonsense', () => {
+    return request(app).get('/api/articles?topic=nonsense').expect(404).then(({body})=>{
+      expect(body.msg).toBe('articles not found')
+    })
+  });
 })

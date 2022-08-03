@@ -278,3 +278,144 @@ describe('GET /api/articles/:article_id/comments',()=>{
     })
   });
 })
+describe('POST /api/articles/:article_id/comments',()=>{
+  test('should return posted comment', () => {
+    return request(app).post('/api/articles/1/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(201).then(({body})=>{
+      const new_comment= body.new_comment 
+      expect(typeof(new_comment.comment_id)).toBe('number')
+      expect(typeof(new_comment.votes)).toBe('number')
+      expect(typeof(new_comment.created_at)).toBe('string')
+      expect(typeof(new_comment.author)).toBe('string')
+      expect(new_comment.body).toBe('THIS IS A NEW COMMENT')
+    })
+  });
+  test('should return authors name instead of username', () => {
+    return request(app).post('/api/articles/2/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(201).then(({body})=>{
+      const new_comment= body.new_comment 
+      expect(new_comment.author).toBe('jonny')
+    })
+  });
+  test('should update database', () => {
+    return request(app).post('/api/articles/12/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(201).then(({body})=>{
+      return request(app).get('/api/articles/12/comments')
+    }).then(data=>{
+      const comment= data.body.comments.at(-1)
+      expect(comment.body).toBe('THIS IS A NEW COMMENT')
+    })
+  });
+  test('status 400: missing username', () => {
+    return request(app).post('/api/articles/2/comments').send({body:'THIS IS A NEW COMMENT'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test('status 400: missing body', () => {
+    return request(app).post('/api/articles/2/comments').send({username:'butter_bridge'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test('status 400: username not found', () => {
+    return request(app).post('/api/articles/2/comments').send({username:'efdsdfs',body:'THIS IS A NEW COMMENT'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test('status 400: invalid username', () => {
+    return request(app).post('/api/articles/2/comments').send({username: 45,body:'THIS IS A NEW COMMENT'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
+    })
+  });
+  test("status 404 if no article found with requested id", () => {
+    return request(app).post('/api/articles/100000/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(404).then(({body})=>{
+      expect(body.msg).toBe('article not found')
+    })
+  });
+  test("status 400 for invalid non numeric id", () => {
+    return request(app).post('/api/articles/banana/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(400).then(({body})=>{
+      expect(body.msg).toBe('invalid id')
+    })
+  });
+})
+describe('GET /api/articles ( sort by queries)',()=>{
+  test('should take sort_by query and return articles in order, defaults to descending', () => {
+      return request(app).get('/api/articles?sort_by=created_at').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('created_at',{descending:true})
+      })
+  });
+  test('sort_by = title', () => {
+      return request(app).get('/api/articles?sort_by=title').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('title',{descending:true})
+      })
+  });
+  test('sort_by = article id', () => {
+      return request(app).get('/api/articles?sort_by=article_id').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('article_id',{descending:true})
+      })
+  });
+  test('sort_by = votes', () => {
+      return request(app).get('/api/articles?sort_by=votes').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('votes',{descending:true})
+      })
+  });
+  test('sort_by = comment_count', () => {
+      return request(app).get('/api/articles?sort_by=comment_count').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('comment_count',{descending:true})
+      })
+  });
+  test('sort_by = topic', () => {
+      return request(app).get('/api/articles?sort_by=topic').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('topic',{descending:true})
+      })
+  });
+  test('sort_by = author', () => {
+      return request(app).get('/api/articles?sort_by=author').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('author',{descending:true})
+      })
+  });
+  test('order query to decide order : ascending', () => {
+      return request(app).get('/api/articles?sort_by=article_id&order=asc').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('article_id')
+      })
+    });
+  test('order query to decide order : descending', () => {
+      return request(app).get('/api/articles?sort_by=article_id&order=desc').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('article_id',{descending:true})
+      })
+    });
+  test('sort_by should default to date', () => {
+      return request(app).get('/api/articles?order=asc').expect(200).then(({body})=>{
+        expect(body.articles).toBeSortedBy('created_at')
+      })
+    });
+  test('400 invalid sort_by query', () => {
+      return request(app).get('/api/articles?sort_by=banana').expect(400).then(({body})=>{
+        expect(body.msg).toBe('bad request')
+      })
+    });
+  test('400 invalid order query', () => {
+      return request(app).get('/api/articles?order=banana').expect(400).then(({body})=>{
+        expect(body.msg).toBe('bad request')
+      })
+    });
+})
+describe('GET /api/articles topics filter query',()=>{
+  test('should filter results using topic query, topic = mitch', () => {
+    return request(app).get('/api/articles?topic=mitch').expect(200).then(({body})=>{
+      body.articles.forEach(article=>{
+        expect(article.topic).toBe('mitch')
+      })
+      expect(body.articles.length).toBeGreaterThan(0)
+    })
+  });
+  test('topic = cats', () => {
+    return request(app).get('/api/articles?topic=cats').expect(200).then(({body})=>{
+      body.articles.forEach(article=>{
+        expect(article.topic).toBe('cats')
+      })
+      expect(body.articles.length).toBeGreaterThan(0)
+    })
+  });
+  test('404 topic = nonsense', () => {
+    return request(app).get('/api/articles?topic=nonsense').expect(404).then(({body})=>{
+      expect(body.msg).toBe('articles not found')
+    })
+  });
+})

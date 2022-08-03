@@ -9,7 +9,7 @@ afterAll(() => {
   });
 beforeEach(() => seed(testData));
 
-describe('POST /api/articles/:article_id/comments',()=>{
+xdescribe('POST /api/articles/:article_id/comments',()=>{
     test('should return posted comment', () => {
       return request(app).post('/api/articles/1/comments').send({username:'butter_bridge',body:'THIS IS A NEW COMMENT'}).expect(201).then(({body})=>{
         const new_comment= body.new_comment 

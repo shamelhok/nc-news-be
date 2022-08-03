@@ -17,11 +17,17 @@ exports.selectArticleNew =(id)=>{
     FROM articles LEFT JOIN comments on articles.article_id=comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id 
    ;`,[id])
 }
-exports.selectAllArticles=(sort_by='created_at',order='desc')=>{
+exports.selectAllArticles=(sort_by='created_at',order='desc',topic)=>{
     if(sort_by==='author'){ sort_by= 'users.name'}
+    let filter =''
+    let array =[]
+    if(topic){
+        filter = ` WHERE topic = $1 `
+        array.push(topic)
+    }
     return db.query(`SELECT title, COUNT(comment_id) AS comment_count, articles.article_id, topic, users.name AS author, articles.body, articles.created_at, articles.votes 
-    FROM articles LEFT JOIN comments on articles.article_id=comments.article_id JOIN users ON articles.author = users.username GROUP BY articles.article_id, users.name ORDER BY ${sort_by} ${order}
-   ;`)
+    FROM articles LEFT JOIN comments on articles.article_id=comments.article_id JOIN users ON articles.author = users.username ${filter} GROUP BY articles.article_id, users.name ORDER BY ${sort_by} ${order}
+   ;`,array )
 }
 exports.selectComments = (id)=>{
     return db.query(`SELECT comment_id, comments.votes, comments.created_at, comments.author, comments.body FROM comments JOIN articles ON articles.article_id=comments.article_id WHERE articles.article_id =$1
