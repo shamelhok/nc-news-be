@@ -1,7 +1,7 @@
 const{getTopics}= require('./topics')
 const{getArticle, patchArticle, getAllArticles }= require('./articles')
 const { getUsers } = require('./users')
-const { getComments } = require('./comments')
+const { getComments, postComment } = require('./comments')
 
 exports.getTopics= getTopics
 exports.getArticle=getArticle
@@ -11,3 +11,4 @@ exports.patchArticle=patchArticle
 exports.getUsers = getUsers
 exports.getAllArticles= getAllArticles
 exports.getComments=getComments
+exports.postComment= postComment

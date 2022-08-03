@@ -225,6 +225,11 @@ describe('GET /api/articles',()=>{
       expect(last.title).toBe(expectedLast.title)
     })
   });
+  test('should respond with articles in descinding date order, tested directly with jest', () => {
+    return request(app).get('/api/articles').expect(200).then(({body})=>{
+      expect(body.articles).toBeSortedBy('created_at',{descending:true})
+    })
+  });
 })
 describe('GET /api/articles/:article_id/comments',()=>{
   test('should respond with comments array', () => {
