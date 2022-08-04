@@ -77,7 +77,7 @@ xdescribe('GET /api/articles topics filter query',()=>{
       body.articles.forEach(article=>{
         expect(article.topic).toBe('mitch')
       })
-      expect(body.articles.length).toBeGreaterThan(0)
+      expect(body.articles.length).toBe(11)
     })
   });
   test('topic = cats', () => {
@@ -85,12 +85,37 @@ xdescribe('GET /api/articles topics filter query',()=>{
       body.articles.forEach(article=>{
         expect(article.topic).toBe('cats')
       })
-      expect(body.articles.length).toBeGreaterThan(0)
+      expect(body.articles.length).toBe(1)
     })
   });
-  test('404 topic = nonsense', () => {
-    return request(app).get('/api/articles?topic=nonsense').expect(404).then(({body})=>{
+  test('topic = valid_topic', () => {
+    return request(app).get('/api/articles?topic=valid_topic').expect(200).then(({body})=>{
       expect(body.msg).toBe('articles not found')
+      expect(body.articles.length).toBe(0)
+    })
+  });
+})
+xdescribe('DELETE /api/comments/:comment_id',()=>{
+  test('should respond with status 204, no content', () => {
+    return request(app).delete('/api/comments/1').expect(204).then(({body})=>{
+      expect(body).toEqual({})
+    })
+  });
+  test('should delete an existing comment', () => {
+    return request(app).delete('/api/comments/10').expect(204).then(({body})=>{
+      return request(app).get('/api/articles/3/comments').expect(200).then(({body})=>{
+        expect(body.comments.length).toBe(1)
+      })
+    })
+  });
+  test('400 for invalid non numeric id', () => {
+    return request(app).delete('/api/comments/fgfd').expect(400).then(({body})=>{
+      expect(body.msg).toBe('invalid id')
+    })
+  });
+  test('404 for valid but non existent id', () => {
+    return request(app).delete('/api/comments/200000').expect(404).then(({body})=>{
+      expect(body.msg).toBe('comment not found')
     })
   });
 })

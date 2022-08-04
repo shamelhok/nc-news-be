@@ -50,15 +50,16 @@ exports.getAllArticles = (req, res, next) => {
   } else{
   selectAllArticles(sort_by,order,topic)
     .then(({ rows: articles }) => {
+      let msg='here are the articles'
       if (articles.length === 0) {
-        res.status(404).send({ msg: "articles not found" });
-      } else {
+       msg="articles not found" 
+      }
         articles.forEach((article) => {
           article.comment_count = parseInt(article.comment_count);
           delete article.body;
         });
-        res.status(200).send({ articles });
-      }
+        res.status(200).send({ msg, articles});
+      
     })
     .catch(next);
   }
