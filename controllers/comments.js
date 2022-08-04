@@ -1,5 +1,5 @@
 const { createRef } = require('../db/seeds/utils')
-const {selectComments, selectUsers, selectArticle, insertComment}= require('../models')
+const {selectComments, selectUsers, selectArticle, insertComment, deleteCommentSql}= require('../models')
 
 exports.getComments = (req,res,next)=>{
     const {article_id}= req.params
@@ -45,4 +45,16 @@ exports.postComment = (req,res,next)=>{
             res.status(201).send({new_comment})
         }).catch(next)
     }
+}
+exports.deleteComment = (req,res,next)=>{
+    const comment_id=req.params.comment_id
+    if (!/^\d+$/.test(comment_id)){
+        res.status(400).send({msg:'invalid id'})
+    }else{
+    deleteCommentSql(comment_id).then(({rows})=>{
+        if (rows.length===0){
+            res.status(404).send({msg:'comment not found'})
+        } else res.sendStatus(204)
+    })
+}
 }
