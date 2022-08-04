@@ -40,16 +40,20 @@ exports.patchArticle = async (req, res, next) => {
   }
 };
 exports.getAllArticles = (req, res, next) => {
-  Promise.all([selectAllArticles(), selectUsers()])
-    .then(([{ rows: articles }, { rows: users }]) => {
+  const sort_by = req.query.sort_by || 'created_at'
+  const order= req.query.order || 'desc'
+  const topic = req.query.topic
+  if(!['asc','desc'].includes(order)){
+    res.status(400).send({msg:'bad request',details:'invalid order query'})
+  } else if(!['title','created_at','votes','article_id','comment_count','body','author','topic'].includes(sort_by)){
+    res.status(400).send({msg:'bad request',details:'invalid sort_by query'})
+  } else{
+  selectAllArticles(sort_by,order,topic)
+    .then(({ rows: articles }) => {
       if (articles.length === 0) {
         res.status(404).send({ msg: "articles not found" });
       } else {
-        const ref = createRef(users, "username", "name");
         articles.forEach((article) => {
-          if (ref.hasOwnProperty(article.author)) {
-            article.author = ref[article.author];
-          }
           article.comment_count = parseInt(article.comment_count);
           delete article.body;
         });
@@ -57,4 +61,5 @@ exports.getAllArticles = (req, res, next) => {
       }
     })
     .catch(next);
+  }
 };
