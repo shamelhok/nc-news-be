@@ -10,18 +10,95 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles",
+    "queries": ["topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": 1527695953341
+          "title": "Eight pug gifs that remind me of mitch",
+          "comment_count": 2,
+          "article_id": 3,
+          "topic": "mitch",
+          "author": "sam",
+          "created_at": "2020-11-03T09:12:00.000Z",
+          "votes": 0
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an article corresponding to the requested article_id",
+    "exampleResponse": {
+      "article": 
+      {
+        "title": "Eight pug gifs that remind me of mitch",
+        "comment_count": 2,
+        "article_id": 3,
+        "topic": "mitch",
+        "author": "sam",
+        "body": "some gifs",
+        "created_at": "2020-11-03T09:12:00.000Z",
+        "votes": 0
+      }
+       }
+  },
+  "PATCH /api/articles/article_id": {
+    "description": "allows the user to change votes of chosen article",
+    "exapmleRequest": {"inc_votes":23},
+    "exampleResponse": {
+      "article": 
+      {
+        "title": "Eight pug gifs that remind me of mitch",
+        "comment_count": 2,
+        "article_id": 3,
+        "topic": "mitch",
+        "author": "sam",
+        "body": "some gifs",
+        "created_at": "2020-11-03T09:12:00.000Z",
+        "votes": 23
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of all comments on given article",
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 3,
+          "votes": 100,
+          "created_at": "2020-03-01T01:13:00.000Z",
+          "author": "sam",
+          "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works."
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "allows user to add a comment to the requested article",
+    "exampleResponse": {
+      "new_comment": {
+        "comment_id": 23,
+        "body": "my dog died of ligma",
+        "article_id": 1,
+        "author": "joe",
+        "votes": 0,
+        "created_at": "2022-08-04T12:06:03.090Z"
+      }
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment when given a valid comment_id"
   }
 }

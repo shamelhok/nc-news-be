@@ -59,7 +59,6 @@ exports.getAllArticles = (req, res, next) => {
           delete article.body;
         });
         res.status(200).send({ msg, articles});
-      
     })
     .catch(next);
   }

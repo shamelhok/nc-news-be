@@ -55,6 +55,6 @@ exports.deleteComment = (req,res,next)=>{
         if (rows.length===0){
             res.status(404).send({msg:'comment not found'})
         } else res.sendStatus(204)
-    })
+    }).catch(next)
 }
 }
