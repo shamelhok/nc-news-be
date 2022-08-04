@@ -413,18 +413,21 @@ describe('GET /api/articles topics filter query',()=>{
       expect(body.articles.length).toBe(1)
     })
   });
-  test('topic = valid_topic', () => {
-    return request(app).get('/api/articles?topic=valid_topic').expect(200).then(({body})=>{
+  test('valid topic with no articles, topic = paper', () => {
+    return request(app).get('/api/articles?topic=paper').expect(200).then(({body})=>{
       expect(body.msg).toBe('articles not found')
       expect(body.articles.length).toBe(0)
+    })
+  });
+  test('invalid topic', () => {
+    return request(app).get('/api/articles?topic=nonsensessdfsf').expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
     })
   });
 })
 describe('DELETE /api/comments/:comment_id',()=>{
   test('should respond with status 204, no content', () => {
-    return request(app).delete('/api/comments/1').expect(204).then(({body})=>{
-      expect(body).toEqual({})
-    })
+    return request(app).delete('/api/comments/1').expect(204)
   });
   test('should delete an existing comment', () => {
     return request(app).delete('/api/comments/10').expect(204).then(({body})=>{
@@ -441,6 +444,27 @@ describe('DELETE /api/comments/:comment_id',()=>{
   test('404 for valid but non existent id', () => {
     return request(app).delete('/api/comments/200000').expect(404).then(({body})=>{
       expect(body.msg).toBe('comment not found')
+    })
+  });
+})
+describe('GET /api',()=>{
+  test('should respond with all endpoints (at time of writing this test)', () => {
+    return request(app).get('/api').expect(200).then(({body})=>{
+      const {endpoints}=body
+      expect(Object.keys(endpoints)).toEqual(expect.arrayContaining([
+        "GET /api", "GET /api/topics","GET /api/articles" , "POST /api/articles/:article_id/comments",
+        "GET /api/users", "GET /api/articles/:article_id", "PATCH /api/articles/article_id",
+        "GET /api/articles/:article_id/comments", "DELETE /api/comments/:comment_id"]));
+    })
+  });
+  test('should respond with details of endpoints', () => {
+    return request(app).get('/api').expect(200).then(({body})=>{
+      const {endpoints}= body
+      for(endpoint in endpoints){
+        const details= endpoints[endpoint]
+        expect(details).toHaveProperty("description")
+        expect(typeof(details.description)).toBe('string')
+      }
     })
   });
 })

@@ -119,3 +119,24 @@ xdescribe('DELETE /api/comments/:comment_id',()=>{
     })
   });
 })
+xdescribe('GET /api',()=>{
+  test('should respond with all endpoints (at time of writing this test)', () => {
+    return request(app).get('/api').expect(200).then(({body})=>{
+      const {endpoints}=body
+      expect(Object.keys(endpoints)).toEqual(expect.arrayContaining([
+        "GET /api", "GET /api/topics","GET /api/articles" , "POST /api/articles/:article_id/comments",
+        "GET /api/users", "GET /api/articles/:article_id", "PATCH /api/articles/article_id",
+        "GET /api/articles/:article_id/comments", "DELETE /api/comments/:comment_id"]));
+    })
+  });
+  test('should respond with details of endpoints', () => {
+    return request(app).get('/api').expect(200).then(({body})=>{
+      const {endpoints}= body
+      for(endpoint in endpoints){
+        const details= endpoints[endpoint]
+        expect(details).toHaveProperty("description")
+        expect(typeof(details.description)).toBe('string')
+      }
+    })
+  });
+})

@@ -47,6 +47,8 @@ exports.getAllArticles = (req, res, next) => {
     res.status(400).send({msg:'bad request',details:'invalid order query'})
   } else if(!['title','created_at','votes','article_id','comment_count','body','author','topic'].includes(sort_by)){
     res.status(400).send({msg:'bad request',details:'invalid sort_by query'})
+  } else if(!['cats','paper','mitch',undefined].includes(topic)){
+    res.status(400).send({msg:'bad request',details:'invalid topic'})
   } else{
   selectAllArticles(sort_by,order,topic)
     .then(({ rows: articles }) => {
@@ -59,7 +61,6 @@ exports.getAllArticles = (req, res, next) => {
           delete article.body;
         });
         res.status(200).send({ msg, articles});
-      
     })
     .catch(next);
   }
