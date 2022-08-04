@@ -413,10 +413,15 @@ describe('GET /api/articles topics filter query',()=>{
       expect(body.articles.length).toBe(1)
     })
   });
-  test('topic = valid_topic', () => {
-    return request(app).get('/api/articles?topic=valid_topic').expect(200).then(({body})=>{
+  test('valid topic with no articles, topic = paper', () => {
+    return request(app).get('/api/articles?topic=paper').expect(200).then(({body})=>{
       expect(body.msg).toBe('articles not found')
       expect(body.articles.length).toBe(0)
+    })
+  });
+  test('invalid topic', () => {
+    return request(app).get('/api/articles?topic=nonsensessdfsf').expect(400).then(({body})=>{
+      expect(body.msg).toBe('bad request')
     })
   });
 })
