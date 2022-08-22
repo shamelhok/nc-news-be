@@ -199,7 +199,7 @@ describe('GET /api/articles',()=>{
     })
   });
   test('should respond with all articles in database', () => {
-    return request(app).get('/api/articles').expect(200).then(({body})=>{
+    return request(app).get('/api/articles?limit=50000').expect(200).then(({body})=>{
       expect(body.articles.length).toBe(12)
     })
   });
@@ -216,7 +216,7 @@ describe('GET /api/articles',()=>{
     })
   });
   test('should respond with articles in descinding date order', () => {
-    return request(app).get('/api/articles').expect(200).then(({body})=>{
+    return request(app).get('/api/articles?limit=50000').expect(200).then(({body})=>{
       const expectedFirst = testData.articleData[2]
       const expectedLast = testData.articleData[6]
       const first = body.articles[0]
@@ -226,7 +226,7 @@ describe('GET /api/articles',()=>{
     })
   });
   test('should respond with articles in descinding date order, tested directly with jest', () => {
-    return request(app).get('/api/articles').expect(200).then(({body})=>{
+    return request(app).get('/api/articles?limit=50000').expect(200).then(({body})=>{
       expect(body.articles).toBeSortedBy('created_at',{descending:true})
     })
   });
@@ -398,7 +398,7 @@ describe('GET /api/articles ( sort by queries)',()=>{
 })
 describe('GET /api/articles topics filter query',()=>{
   test('should filter results using topic query, topic = mitch', () => {
-    return request(app).get('/api/articles?topic=mitch').expect(200).then(({body})=>{
+    return request(app).get('/api/articles?topic=mitch&limit=50000').expect(200).then(({body})=>{
       body.articles.forEach(article=>{
         expect(article.topic).toBe('mitch')
       })
