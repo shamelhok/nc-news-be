@@ -1,5 +1,5 @@
-const{getTopics}= require('./topics')
-const{getArticle, patchArticle, getAllArticles }= require('./articles')
+const{getTopics, postTopic}= require('./topics')
+const{getArticle, patchArticle, getAllArticles, postArticle, deleteArticle }= require('./articles')
 const { getUsers } = require('./users')
 const { getComments, postComment, deleteComment } = require('./comments')
 const endpoints = require ('../endpoints.json')
@@ -17,3 +17,6 @@ exports.deleteComment = deleteComment
 exports.getEndpoints = (req,res,next)=>{
     res.status(200).send({endpoints})
 }
+exports.postArticle= postArticle
+exports.postTopic= postTopic
+exports.deleteArticle= deleteArticle

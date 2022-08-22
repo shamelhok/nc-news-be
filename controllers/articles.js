@@ -4,6 +4,9 @@ const {
   updateVotes,
   selectArticleNew,
   selectAllArticles,
+  insertArticle,
+  deleteArticleSql,
+  selectAllArticlesNew,
 } = require("../models");
 const { createRef } = require("../db/seeds/utils");
 
@@ -43,14 +46,16 @@ exports.getAllArticles = (req, res, next) => {
   const sort_by = req.query.sort_by || 'created_at'
   const order= req.query.order || 'desc'
   const topic = req.query.topic
+  const limit = req.query.limit || 10
+  const p = req.query.p ||1
   if(!['asc','desc'].includes(order)){
     res.status(400).send({msg:'bad request',details:'invalid order query'})
   } else if(!['title','created_at','votes','article_id','comment_count','body','author','topic'].includes(sort_by)){
     res.status(400).send({msg:'bad request',details:'invalid sort_by query'})
   } else if(!['cats','paper','mitch',undefined].includes(topic)){
     res.status(400).send({msg:'bad request',details:'invalid topic'})
-  } else{
-  selectAllArticles(sort_by,order,topic)
+  } else {
+  selectAllArticlesNew(sort_by,order,topic,limit,p)
     .then(({ rows: articles }) => {
       let msg='here are the articles'
       if (articles.length === 0) {
@@ -65,3 +70,24 @@ exports.getAllArticles = (req, res, next) => {
     .catch(next);
   }
 };
+exports.postArticle = (req,res,next)=>{
+  try {const {author,title,body,topic} =req.body
+  insertArticle(author,title,body,topic)
+      .then(({rows})=>{
+          const new_article =rows[0]
+          res.status(201).send({new_article})
+      }).catch(next)
+  } catch {res.status(400).send({msg:'bad request'})}
+}
+exports.deleteArticle = (req,res,next)=>{
+  const article_id=req.params.article_id
+  if (!/^\d+$/.test(article_id)){
+      res.status(400).send({msg:'invalid id'})
+  }else{
+  deleteArticleSql(article_id).then(({rows})=>{
+      if (rows.length===0){
+          res.status(404).send({msg:'article not found'})
+      } else res.sendStatus(204)
+  }).catch(next)
+}
+}
