@@ -52,9 +52,7 @@ exports.getAllArticles = (req, res, next) => {
     res.status(400).send({msg:'bad request',details:'invalid order query'})
   } else if(!['title','created_at','votes','article_id','comment_count','body','author','topic'].includes(sort_by)){
     res.status(400).send({msg:'bad request',details:'invalid sort_by query'})
-  } else if(!['cats','paper','mitch',undefined].includes(topic)){
-    res.status(400).send({msg:'bad request',details:'invalid topic'})
-  } else {
+  }  else {
   selectAllArticlesNew(sort_by,order,topic,limit,p)
     .then(({ rows: articles }) => {
       let msg='here are the articles'

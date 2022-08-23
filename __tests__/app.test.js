@@ -419,11 +419,11 @@ describe('GET /api/articles topics filter query',()=>{
       expect(body.articles.length).toBe(0)
     })
   });
-  test('invalid topic', () => {
-    return request(app).get('/api/articles?topic=nonsensessdfsf').expect(400).then(({body})=>{
-      expect(body.msg).toBe('bad request')
-    })
-  });
+  // test('invalid topic', () => {
+  //   return request(app).get('/api/articles?topic=nonsensessdfsf').expect(400).then(({body})=>{
+  //     expect(body.msg).toBe('bad request')
+  //   })
+  // });
 })
 describe('DELETE /api/comments/:comment_id',()=>{
   test('should respond with status 204, no content', () => {
