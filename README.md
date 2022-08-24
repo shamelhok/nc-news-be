@@ -9,6 +9,7 @@ You will need to create two .env files: `.env.test` and `.env.development`. Into
 https://nc-news-shamel.herokuapp.com/api
 
 ## terminal
+
 sudo service postgresql start
 
-min versions
+npm install

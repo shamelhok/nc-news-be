@@ -4,7 +4,6 @@
   },
   "GET /api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
@@ -44,7 +43,7 @@
   },
   "PATCH /api/articles/article_id": {
     "description": "allows the user to change votes of chosen article",
-    "exapmleRequest": {"inc_votes":23},
+    "exampleRequest": {"inc_votes":23},
     "exampleResponse": {
       "article": 
       {
@@ -87,6 +86,7 @@
   },
   "POST /api/articles/:article_id/comments": {
     "description": "allows user to add a comment to the requested article",
+    "exampleRequest": {"username":"butter_bridge","body": "my dog died of ligma"},
     "exampleResponse": {
       "new_comment": {
         "comment_id": 23,
