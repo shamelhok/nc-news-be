@@ -1,5 +1,5 @@
 const { createRef } = require('../db/seeds/utils')
-const {selectComments, selectUsers, selectArticle, insertComment, deleteCommentSql}= require('../models')
+const {selectComments, selectUsers, selectArticle, insertComment, deleteCommentSql, updateCommentVotes}= require('../models')
 
 exports.getComments = (req,res,next)=>{
     const {article_id}= req.params
@@ -58,3 +58,17 @@ exports.deleteComment = (req,res,next)=>{
     }).catch(next)
 }
 }
+
+exports.patchComment = async (req, res, next) => {
+    const { comment_id } = req.params;
+    const inc_votes = req.body.inc_votes;
+    if (!/^\d+$/.test(comment_id)) {
+      res.status(400).send({ msg: "invalid id" });
+    } else if (typeof inc_votes !== "number") {
+      res.status(400).send({ msg: "bad request" });
+    } else {
+      updateCommentVotes(inc_votes, comment_id).then(({rows})=>{
+        res.status(200).send({comment:rows[0]})
+      }).catch(next);
+    }
+  };
