@@ -5,7 +5,7 @@ app.use(cors());
 app.use(express.json())
 
 const{getTopics, badUrl, getArticle, handleCatch, patchArticle, getUsers, getAllArticles, getComments, postComment, deleteComment, getEndpoints, postArticle, postTopic, deleteArticle}=require('./controllers');
-const { getUserByUsername } = require('./controllers/users');
+const { getUserByUsername, addUser } = require('./controllers/users');
 const { patchComment } = require('./controllers/comments');
 
 app.get('/api/topics',getTopics)
@@ -13,6 +13,7 @@ app.get('/api/articles/:article_id',getArticle)
 app.patch('/api/articles/:article_id',patchArticle)
 app.get('/api/users/:username',getUserByUsername)
 app.get('/api/users',getUsers)
+app.post('/api/users',addUser)
 app.get('/api/articles',getAllArticles)
 app.get('/api/articles/:article_id/comments',getComments)
 app.post('/api/articles/:article_id/comments',postComment)

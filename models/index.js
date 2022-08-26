@@ -69,3 +69,7 @@ exports.selectAllArticlesNew=(sort_by='created_at',order='desc',topic,limit=10,p
     FROM articles LEFT JOIN comments on articles.article_id=comments.article_id JOIN users ON articles.author = users.username ${filter} GROUP BY articles.article_id, users.name ORDER BY ${sort_by} ${order}
     LIMIT $1 OFFSET $2;`,array )
 }
+exports.insertUser = (username,name,avatar_url)=>{
+    return db.query (`INSERT INTO users (username,name,avatar_url)
+    VALUES ($1,$2,$3) RETURNING *;`,[username,name,avatar_url])
+}
