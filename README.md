@@ -4,7 +4,7 @@
 
 Ensure you have postgresql installed and running, you may need to run `sudo service postgresql start` in the terminal
 
-`cd` insto the directory then run `npm install`
+`cd` into the directory then run `npm install`
 
 ## Setting up database environment
 
