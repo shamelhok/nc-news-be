@@ -1,5 +1,6 @@
 # Northcoders News API
-This is my first back end project, 
+
+This is my first back end project, which I made as part of the Northcoders boot camp.
 
 ## Hosted Website
 https://nc-news-shamel.herokuapp.com/api
