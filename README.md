@@ -10,6 +10,6 @@ https://nc-news-shamel.herokuapp.com/api
 
 ## Terminal Scripts
 
-sudo service postgresql start
+Ensure you have postgresql installed and running, you may need to run `sudo service postgresql start` in the terminal
 
 npm install
