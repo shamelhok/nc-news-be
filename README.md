@@ -8,6 +8,7 @@ https://nc-news-shamel.herokuapp.com/api
 ## To view and test the code
 
 Fork the repository, `git clone` it, `cd` into the directory then run `npm install`.
+
 Ensure you have postgresql installed and running, you may need to run `sudo service postgresql start` in the terminal.
 
 ### Setting up database environment
