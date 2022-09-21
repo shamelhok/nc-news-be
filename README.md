@@ -17,7 +17,9 @@ Double check that these .env files are .gitignored.
 
 Run `npm run setup-dbs` in the terminal to initialise the databases.
 
-Run `npm start` to listen on port 9090 (can be changed in listen.js).
+Run `npm run seed` to seed the development database.
+
+Run `npm start` to listen on port 9090 (can be changed in listen.js) using the development data.
 
 http://localhost:9090/api
 
