@@ -1,6 +1,6 @@
 # Northcoders News API
 
-This is my first back end project, which I made as part of the Northcoders boot camp.
+This is my first back end project, which I made as part of the Northcoders boot camp using test driven development, Express.js and PostgreSQL.
 
 ## Hosted Website
 https://nc-news-shamel.herokuapp.com/api
