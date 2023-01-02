@@ -3,7 +3,7 @@
 This is my first back end project, which I made as part of the Northcoders boot camp using test driven development, Express.js and PostgreSQL.
 
 ## Hosted Website
-https://nc-news-shamel.herokuapp.com/api
+https://nc-news-api-rwfo.onrender.com/api
 
 ## To view and test the code
 
