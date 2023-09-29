@@ -100,6 +100,5 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a comment when given a valid comment_id"
-  },
-  "stuff":"dfsdf"
+  }
 }
